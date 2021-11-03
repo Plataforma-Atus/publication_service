@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  atus:
+    build: . 
+    command: >
+      sh -c "python3 manage.py runserver 0.0.0.0:8003"
+    
+     
+    volumes:
+      - ./:/code
+    ports:
+      - 8003:8003
+    env_file:
+      - .env
