@@ -1,5 +1,5 @@
 from base64 import b64encode as encode
-from datetime import date #strftime, strptime
+from datetime import date  # strftime, strptime
 from json import loads, dumps
 from os import path
 from re import sub
@@ -23,7 +23,7 @@ def create_publication(request):
     # Parse request info, then index
     column = newspaper[request.POST.get('column')]
     number_column = sub(r'[^\d]', '', request.POST.get('column'))
-    pv_os =  request.POST.get('pv_os')
+    pv_os = request.POST.get('pv_os')
     pvos_number = request.POST.get('pvos_number')
     title = (request.POST.get('title')).replace(" ", "")
     days = request.POST.get('days')
@@ -31,27 +31,31 @@ def create_publication(request):
     user_condensation = request.POST.get('user_condensation')
     client = (loads(request.POST.get('client')))[0]['fields']['name']
     date_file = date.today()
+    #print(loads(request.POST))
+    print(request.POST)
+
 
     # Parse file, indicate name, extension_in and path
     file = request.FILES['file']
     newspaper_name[1] = newspaper_name[1].replace(" ", "")
     print(file)
-    full_name = (str(client) + "/" +
-                 str(date_file.year) + "/" +
-                 str(pv_os) + "-" +
-                 str(pvos_number) + "/" +
-                 str(date_file.month) + "-" +
-                 str(date_file.day) + "/" +
-                 str(pv_os) + "-" +
-                 str(pvos_number) + "_" +
-                 str(newspaper_name[1].rstrip()) + "-" +
-                 str(newspaper_name[2]) + "_" +
-                 str(title).upper() + "_" +
-                 str(publication_type_name) + "_" +
-                 str(days) + "_" +
-                 str(number_column) + "x" +
-                 "height" +
-                 str(extension_in))
+    full_name = (
+            str(client) + "/" +
+            str(date_file.year) + "/" +
+            str(pv_os) + "-" +
+            str(pvos_number) + "/" +
+            str(date_file.month) + "-" +
+            str(date_file.day) + "/" +
+            str(pv_os) + "-" +
+            str(pvos_number) + "_" +
+            str(newspaper_name[1].rstrip()) + "-" +
+            str(newspaper_name[2]) + "_" +
+            str(title).upper() + "_" +
+            str(publication_type_name) + "_" +
+            str(days) + "_" +
+            str(number_column) + "x" +
+            "height" +
+            str(extension_in))
 
     if storage.exists(full_name):
         storage.delete(full_name)

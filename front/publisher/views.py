@@ -68,7 +68,8 @@ def publications(request):
 
 # Populate drop-down list of Sections
 def newspaper_section_dropdown(request):
-    newspaper_sections = models.NewspaperSection.objects.filter(newspaper_id=request.POST.get('newspaper')).order_by('name_section')
+    newspaper_sections = models.NewspaperSection.objects.filter(newspaper_id=request.POST.get('newspaper')).order_by(
+        'name_section')
     newspaper_sections_dropdown = serializer_section.serialize('json', newspaper_sections)
     return HttpResponse(newspaper_sections_dropdown)
 
@@ -101,9 +102,9 @@ def store_publication(request, result, document_name, publication_type):
     )
     publication.save()
 
+
 # Define local storage, date, document and a client
 def create_publication(request):
-
     client = models.Client.objects.filter(pk=request.POST.get('client'))
     client_json = serializer_section.serialize('json', client)
     client = client.get(pk=request.POST.get('client'))
@@ -138,15 +139,16 @@ def create_publication(request):
     document_name_without_extension = document_name
     document_name = "documents/" + document_name
 
-    
     results = dict()
     results['results'] = []
 
     # Loop for newspapers
     number_newspaper = 1
     while request.POST.get('publication_type_' + str(number_newspaper)):
-        newspaper = models.NewspaperSection.objects.filter(pk=request.POST.get('newspaper_section_' + str(number_newspaper)))
-        publication_type = models.PublicationType.objects.filter(pk=request.POST.get('publication_type_' + str(number_newspaper)))
+        newspaper = models.NewspaperSection.objects.filter(
+            pk=request.POST.get('newspaper_section_' + str(number_newspaper)))
+        publication_type = models.PublicationType.objects.filter(
+            pk=request.POST.get('publication_type_' + str(number_newspaper)))
         publication_type_name = serializer.PublicationTypeSerializer(publication_type, many=True)
         publication_type_name = (publication_type_name.data[0]['name']['name'])
 
@@ -164,7 +166,7 @@ def create_publication(request):
                 'pvos_number': pvos_number,
                 'days': days,
                 'user_condensation': user_condensation,
-                'title': title, 
+                'title': title,
                 'publication_type_name': publication_type_name,
                 'extension_in': extension_in
                 }
@@ -179,7 +181,6 @@ def create_publication(request):
         result = json.loads(result.content)
         file_resource.close()
 
-
         result['doc_name'] = document_name_without_extension
 
         # Save publication
@@ -190,4 +191,3 @@ def create_publication(request):
         number_newspaper = number_newspaper + 1
 
     return render(request, 'result.html', results)
-
