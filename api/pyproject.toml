@@ -69,6 +69,8 @@ urllib3 = "1.26.4"
 virtualenv = "20.4.7"
 webencodings = "0.5.1"
 python-docx = { git = "https://github.com/phgrigorio/python-docx", branch = "master" }
+pytest-django = "^4.4.0"
+pytest-cov = "^3.0.0"
 
 [tool.poetry.dev-dependencies]
 

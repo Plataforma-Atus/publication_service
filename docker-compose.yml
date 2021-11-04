@@ -17,6 +17,7 @@ services:
   api:
     build: ./api
     command: python3 -Wd manage.py runserver 0.0.0.0:8003
+
     volumes:
       - ./api:/code
       - ./documents:/code/documents
@@ -24,6 +25,7 @@ services:
       - 8003
     env_file:
       - api/.env
+
 
   db:
       image: postgres:13
