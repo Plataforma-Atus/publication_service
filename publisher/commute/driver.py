@@ -1,6 +1,9 @@
-from os import remove, rename, system
+import logging
+from os import rename
 
 from publisher.commute import budgeter, commuter, cropper, fstring, standarder
+
+logging.basicConfig(level=logging.INFO)
 
 
 def rename_files(result, format_parameters):
@@ -25,7 +28,7 @@ def rename_files(result, format_parameters):
         rename(f"{result['file'].replace('_crp', '')}{format_parameters['extension_in']}",
                f"{document_name_with_height}{format_parameters['extension_in']}")
     result['file'] = document_name_with_height.replace('_crp', '')
-    print(document_name_with_height)
+    logging.info(document_name_with_height)
     format_parameters['document_name_with_height'] = document_name_with_height
     cropper.convert_pdf_to_greyscale(format_parameters)
     return result
@@ -70,7 +73,7 @@ def manipulate_pdf(format_parameters):
         return calculate_budget(result, format_parameters)
 
     else:
-        print(fstring.message["exception"]['format'])
+        logging.info(fstring.message["exception"]['format'])
 
 
 def manipulate_docx(format_parameters):
@@ -80,14 +83,14 @@ def manipulate_docx(format_parameters):
         return manipulate_pdf(format_parameters)
 
     except Exception as unknown_error:
-        print(format_parameters['document_name'])
-        print(f"Description: {unknown_error}", "- driver.to_default")
+        logging.info(format_parameters['document_name'])
+        logging.info(f"Description: {unknown_error}", "- driver.to_default")
         return
 
 
 def road_map(format_parameters):
     if format_parameters['extension_in'] == fstring.formats["commute"][1]:
-        print(fstring.message["info"]['conversion_not'])
+        logging.info(fstring.message["info"]['conversion_not'])
         result = manipulate_docx(format_parameters)
     elif format_parameters['extension_in'] == fstring.formats["commute"][2] \
             or format_parameters['extension_in'] == fstring.formats["commute"][3] \
@@ -106,9 +109,9 @@ def road_map(format_parameters):
                               format_parameters['extension_out'])
 
     else:
-        print(fstring.message["exception"]['format_allowed'], "- driver.driver")
+        logging.info(fstring.message["exception"]['format_allowed'], "- driver.driver")
 
-    print(result, " - result for driver")
+    logging.info(result, " - result for driver")
 
     return result
 
@@ -155,5 +158,5 @@ def format_parameter(document_name, extension_in, newspaper, publication_type,
     # Font definer
     format_parameters['font_name'] = str(fstring.formats['font'][format_parameters['font_index']])
 
-    print(format_parameters)
+    logging.info(format_parameters)
     return format_parameters

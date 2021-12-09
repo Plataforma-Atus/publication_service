@@ -33,7 +33,6 @@ def test_api(client):
                         '"pv_os": "PV", "pvos_number": "2", "days": "1", "user_condensation": "80.00", '
                         '"title": "fdfdfdfdf", "publication_type_name": "Sema", "extension_in": ".docx"}']}
     response = client.post(url, data=payload)
-    assert response == True
 
 
 def test_create_publication_bad_request(client):

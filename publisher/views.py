@@ -1,3 +1,4 @@
+import logging
 from base64 import b64encode as encode
 from datetime import date  # strftime, strptime
 from json import dumps, loads
@@ -44,11 +45,11 @@ def create_publication(
     result['format_out'] = newspaper['format_out']
 
     try:
-        print(fstring.message["info"]['process_success'])
+        logging.info(fstring.message["info"]['process_success'])
 
         return HttpResponse(dumps(result), content_type=fstring.formats['http']['json'])
     except result[None]:
         raise Http404(fstring.message['http']['404'])
     except Exception as http_error:
-        print(result)
-        print(f"Description: {http_error}")
+        logging.info(result)
+        logging.info(f"Description: {http_error}")

@@ -1,3 +1,4 @@
+import logging
 from math import ceil
 from os import remove, rename, system
 
@@ -6,6 +7,8 @@ from pdfCropMargins import crop
 from PyPDF2 import PdfFileReader, PdfFileWriter
 
 from publisher.commute import fstring
+
+logging.basicConfig(level=logging.INFO)
 
 
 def read_pdf_size(document_name, format_parameters):
@@ -33,9 +36,11 @@ def read_pdf_size(document_name, format_parameters):
         write_page = write_pdf.getPage(page_number)
         write_page.mergeScaledPage(page, 1, True)
         total_height = total_height + float(height)
-        print("Page:", page_number, "-",
-              "Height(cm):", "{:.2f}".format(float(height)), "-",
-              "Width(cm):", "{:.2f}".format(float(width)))
+        logging.info(
+            "Page:", page_number, "-",
+            "Height(cm):", "{:.2f}".format(float(height)), "-",
+            "Width(cm):", "{:.2f}".format(float(width))
+        )
 
     with open(f'{document_name}_scl.pdf', "wb") as pdf_file:
         write_pdf.write(pdf_file)
@@ -81,9 +86,9 @@ def make_pdf_preview(document_name):
                 'JPEG'
             )
     except FileNotFoundError:
-        print(fstring.message["exception"]['file_not_found'])
+        logging.info(fstring.message["exception"]['file_not_found'])
     except ValueError:
-        print(fstring.message["exception"]['value'])
+        logging.info(fstring.message["exception"]['value'])
 
 
 def auto_crop_pdf(format_parameters):
@@ -100,8 +105,8 @@ def auto_crop_pdf(format_parameters):
         make_pdf_preview(document_name)
         return read_pdf_size(pdf_cropped, format_parameters)
     except FileNotFoundError:
-        print(fstring.message["exception"]['file_not_found'])
+        logging.info(fstring.message["exception"]['file_not_found'])
     except ValueError:
-        print(fstring.message["exception"]['value'])
+        logging.info(fstring.message["exception"]['value'])
     except Exception as unknown_error:
-        print(f"Description: {unknown_error}")
+        logging.info(f"Description: {unknown_error}")

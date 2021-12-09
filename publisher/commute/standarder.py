@@ -1,3 +1,4 @@
+import logging
 from datetime import date, timedelta
 from re import sub
 
@@ -6,6 +7,8 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_TAB_ALIGNMENT
 from docx.shared import Cm, Pt, RGBColor
 
 from publisher.commute import fstring
+
+logging.basicConfig(level=logging.INFO)
 
 
 def find_replace(format_parameter):
@@ -40,6 +43,7 @@ def find_replace(format_parameter):
             r.text = sub(r" ?(-) ", "\u00a0\\g<1> ", r.text)
             r.text = sub(r" \u00a0+", "\u00a0", r.text)
 
+
 def extract_text(format_parameters):
     format_parameters['texts_flowing'] = ''
 
@@ -53,8 +57,9 @@ def extract_text(format_parameters):
         index = 3
         format_parameters['texts_flowing'] = format_parameters['docx_default'].add_paragraph()
 
-    format_parameters['texts_flowing'].paragraph_format.tab_stops.add_tab_stop(format_parameters['docx_default'].sections[0].page_width - Cm(0.05),
-                                                          WD_TAB_ALIGNMENT.RIGHT)
+    format_parameters['texts_flowing'].paragraph_format.tab_stops.add_tab_stop(
+        format_parameters['docx_default'].sections[0].page_width - Cm(0.05),
+        WD_TAB_ALIGNMENT.RIGHT)
 
     for idx, format_parameters['paragraph'] in enumerate(format_parameters['document'].paragraphs):
         if index > 0:
@@ -64,24 +69,27 @@ def extract_text(format_parameters):
             if format_parameters['paragraph'].text != '':
                 run_text(format_parameters)
 
+
 def insert_date(format_parameters):
     docx_default = format_parameters['docx_default']
     if format_parameters['name_section'] in fstring.newspapers['insert_date']:
         date_today = date.today()
         docx_default.paragraphs[-1].add_run('\t')
-        print(format_parameters['days'])
+        logging.info(format_parameters['days'])
         if format_parameters['days'] == "1":
             docx_default.paragraphs[-1].add_run((date_today + timedelta(days=1)).strftime('%d/%m/%y'))
         elif format_parameters['days'] == "2":
             docx_default.paragraphs[-1].add_run((date_today + timedelta(days=1)).strftime('%d/%m') + " e " +
-                                                    (date_today + timedelta(days=2)).strftime('%d/%m/%y'))
+                                                (date_today + timedelta(days=2)).strftime('%d/%m/%y'))
         elif format_parameters['days'] == "3":
             docx_default.paragraphs[-1].add_run((date_today + timedelta(days=1)).strftime('%d/%m') + ", " +
-                                                    (date_today + timedelta(days=2)).strftime('%d/%m') + " e " +
-                                                    (date_today + timedelta(days=3)).strftime('%d/%m/%y'))
+                                                (date_today + timedelta(days=2)).strftime('%d/%m') + " e " +
+                                                (date_today + timedelta(days=3)).strftime('%d/%m/%y'))
+
 
 def set_color(format_parameters):
     format_parameters['texts_flowing'].runs[-1].font.color.rgb = RGBColor(0x00, 0x00, 0x00)
+
 
 def run_text(format_parameters):
     if format_parameters['bold'] or format_parameters['italic'] or format_parameters['underline']:
@@ -92,15 +100,18 @@ def run_text(format_parameters):
             for r in format_parameters['paragraph'].runs:
                 r.text = sub('  +', ' ', r.text)
                 if r.text != '' and r.text != ' ':
-                    if r.bold == format_parameters['texts_flowing'].runs[-1].bold and r.italic == format_parameters['texts_flowing'].runs[
-                        -1].italic and r.underline == format_parameters['texts_flowing'].runs[-1].underline:
-                        if len(format_parameters['texts_flowing'].runs[-1].text) > 0 and format_parameters['texts_flowing'].runs[-1].text[-1] == ' ' and r.text[
+                    if r.bold == format_parameters['texts_flowing'].runs[-1].bold and r.italic == \
+                            format_parameters['texts_flowing'].runs[
+                                -1].italic and r.underline == format_parameters['texts_flowing'].runs[-1].underline:
+                        if len(format_parameters['texts_flowing'].runs[-1].text) > 0 and \
+                                format_parameters['texts_flowing'].runs[-1].text[-1] == ' ' and r.text[
                             0] == ' ':
                             format_parameters['texts_flowing'].runs[-1].add_text(r.text[1:])
                         else:
                             format_parameters['texts_flowing'].runs[-1].add_text(r.text)
                     else:
-                        texts_block = format_parameters['texts_flowing'].add_run(r.text, style=format_parameters['condensation'])
+                        texts_block = format_parameters['texts_flowing'].add_run(r.text, style=format_parameters[
+                            'condensation'])
                         set_color(format_parameters)
                         if format_parameters['bold']:
                             texts_block.bold = r.bold
@@ -113,19 +124,23 @@ def run_text(format_parameters):
                         format_parameters['texts_flowing'].runs[-1].add_text(' ')
 
     else:
-        format_parameters['texts_flowing'].add_run(format_parameters['paragraph'].text, style=format_parameters['condensation'])
+        format_parameters['texts_flowing'].add_run(format_parameters['paragraph'].text,
+                                                   style=format_parameters['condensation'])
+
 
 def read_text(format_parameters):
     if format_parameters['format_allowed'] == "0":
         format_parameters['text_index'] = 3
         for idx, format_parameters['initial_paragraph'] in enumerate(format_parameters['document'].paragraphs):
             if format_parameters['text_index'] > 0:
-                format_parameters['initial_paragraph'].text = sub('  +', ' ', 
+                format_parameters['initial_paragraph'].text = sub('  +', ' ',
                                                                   format_parameters['initial_paragraph'].text)
-                if format_parameters['initial_paragraph'].text != '' and format_parameters['initial_paragraph'].text != ' ':
+                if format_parameters['initial_paragraph'].text != '' and format_parameters[
+                    'initial_paragraph'].text != ' ':
                     format_parameters['text_index'] = format_parameters['text_index'] - 1
                     if format_parameters['docx_default'].paragraphs[0].text == '':
-                        format_parameters['docx_default'].paragraphs[0].text = format_parameters['initial_paragraph'].text
+                        format_parameters['docx_default'].paragraphs[0].text = format_parameters[
+                            'initial_paragraph'].text
                     else:
                         format_parameters['docx_default'].add_paragraph(format_parameters['initial_paragraph'].text)
             else:
@@ -134,12 +149,15 @@ def read_text(format_parameters):
         format_parameters['text_index'] = 1
         for idx, format_parameters['initial_paragraph'] in enumerate(format_parameters['document'].paragraphs):
             if format_parameters['text_index'] > 0:
-                format_parameters['initial_paragraph'].text = sub('  +', ' ', format_parameters['initial_paragraph'].text)
-                if format_parameters['initial_paragraph'].text != '' and format_parameters['initial_paragraph'].text != ' ':
+                format_parameters['initial_paragraph'].text = sub('  +', ' ',
+                                                                  format_parameters['initial_paragraph'].text)
+                if format_parameters['initial_paragraph'].text != '' and format_parameters[
+                    'initial_paragraph'].text != ' ':
                     format_parameters['text_index'] = format_parameters['text_index'] - 1
                     format_parameters['docx_default'].paragraphs[0].text = format_parameters['initial_paragraph'].text
             else:
                 break
+
 
 def format_text_head(i, format_parameters):
     if format_parameters['format_allowed'] == "0":
@@ -152,7 +170,8 @@ def format_text_head(i, format_parameters):
 
         if i == 0:
             format_parameters['texts'].font.size = Pt(format_parameters['font_size_company'])
-            format_parameters['docx_default'].paragraphs[i].paragraph_format.line_spacing = Pt(format_parameters['font_leading_company'])
+            format_parameters['docx_default'].paragraphs[i].paragraph_format.line_spacing = Pt(
+                format_parameters['font_leading_company'])
 
         if i == 2 and format_parameters['name_section'] in fstring.newspapers['special_format_head_spaced']:
             format_parameters['docx_default'].paragraphs[i].paragraph_format.line_spacing = Pt(13)
@@ -165,10 +184,12 @@ def format_text_head(i, format_parameters):
         format_parameters['docx_default'].paragraphs[i].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
         format_parameters['texts'].bold = format_parameters['bold']
 
+
 def format_document_size(format_parameters):
     column = format_parameters['column']
     format_parameters['docx_default'].sections[0].page_width = Cm(column)
     format_parameters['docx_default'].sections[0].page_height = Cm(format_parameters['height'])
+
 
 def format_margins(format_parameters):
     document_margins = [0, 0, 0, 0]
@@ -183,8 +204,8 @@ def format_margins(format_parameters):
     format_parameters['docx_default'].sections[0].right_margin = Cm(document_margins[2])
     format_parameters['docx_default'].sections[0].bottom_margin = Cm(document_margins[3])
 
-def format_page(format_parameters):
 
+def format_page(format_parameters):
     for i in range(len(format_parameters['docx_default'].paragraphs)):
         format_parameters['docx_default'].paragraphs[i].paragraph_format.space_after = Pt(0)
         format_parameters['docx_default'].paragraphs[i].paragraph_format.space_before = Pt(0)
@@ -201,15 +222,17 @@ def format_page(format_parameters):
             format_parameters['docx_default'].paragraphs[i].paragraph_format.right_indent = Cm(border_indent)
             format_parameters['docx_default'].paragraphs[i].paragraph_format.border_top(border_size, border_space)
             format_parameters['docx_default'].paragraphs[i].paragraph_format.border_bottom(border_size,
-                                                                                               border_space)
+                                                                                           border_space)
             format_parameters['docx_default'].paragraphs[i].paragraph_format.border_left(border_size, border_space)
             format_parameters['docx_default'].paragraphs[i].paragraph_format.border_right(border_size, border_space)
 
         for format_parameters['texts'] in format_parameters['docx_default'].paragraphs[i].runs:
             format_parameters['texts'].font.name = format_parameters['font_name']
             format_parameters['texts'].font.size = Pt(format_parameters['font_size'])
-            format_parameters['docx_default'].paragraphs[i].paragraph_format.line_spacing = Pt(format_parameters['font_leading'])
+            format_parameters['docx_default'].paragraphs[i].paragraph_format.line_spacing = Pt(
+                format_parameters['font_leading'])
             format_text_head(i, format_parameters)
+
 
 def special_adjust(format_parameters):
     if format_parameters['name_section'] == 'Comércio, Indústria e Serviços - DOPR - PR':
@@ -223,16 +246,17 @@ def special_adjust(format_parameters):
             document_right_margin = 4
         docx_default.sections[0].right_margin = Cm(document_right_margin)
 
+
 def save_document(format_parameters):
     format_parameters['docx_default'].save(format_parameters['document_name'] + '.docx')
     chars_count = 0
     for p in format_parameters['docx_default'].paragraphs:
         format_parameters['chars_count'] = chars_count + len(p.text)
-    print(fstring.message["info"]['docx_success'])
+    logging.info(fstring.message["info"]['docx_success'])
 
 
 def standardizer_docx(format_parameters):
-    print(fstring.message["info"]['standard_start'])
+    logging.info(fstring.message["info"]['standard_start'])
     format_parameters['document'] = Document(format_parameters['document_name'] + '.docx')
     format_parameters['docx_default'] = Document(fstring.paths['model'])
 
