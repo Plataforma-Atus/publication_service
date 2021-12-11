@@ -14,7 +14,6 @@ def path_finder():
 
 def commuter(document, extension_in, extension_out):
     try:
-        # if extension_out != ".pdf":
         system(f'unoconv -f "{extension_out[1:]}" "{path_finder()}{document + extension_in}"')
         logging.info(f"Converted \"{extension_in}\" to \"{extension_out}\".")
 

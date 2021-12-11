@@ -1,9 +1,7 @@
 import logging
-from base64 import b64encode as encode
-from datetime import date  # strftime, strptime
-from json import dumps, loads
+from datetime import date
+from json import dumps
 from os import path
-from re import sub
 
 from django.core.files.storage import default_storage as storage
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed
@@ -41,7 +39,7 @@ def create_publication(
         days, user_condensation, just_name
     )
 
-    result = driver.road_map(format_parameters)
+    result = driver.checking_input_extension(format_parameters)
     result['format_out'] = newspaper['format_out']
 
     try:

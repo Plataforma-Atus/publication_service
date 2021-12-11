@@ -20,6 +20,14 @@ def read_pdf_size(document_name, format_parameters):
     total_height = 0
     width = 0
 
+    total_height, width = result_width_and_height(format_parameters, number_of_pages, read_pdf, total_height, width,
+                                                  write_pdf)
+
+    result = cut_out_pdf(document_name, total_height, width, write_pdf)
+    return result
+
+
+def result_width_and_height(format_parameters, number_of_pages, read_pdf, total_height, width, write_pdf):
     for page_number in range(number_of_pages):
         page = read_pdf.getPage(page_number)
 
@@ -41,7 +49,10 @@ def read_pdf_size(document_name, format_parameters):
             "Height(cm):", "{:.2f}".format(float(height)), "-",
             "Width(cm):", "{:.2f}".format(float(width))
         )
+    return total_height, width
 
+
+def cut_out_pdf(document_name, total_height, width, write_pdf):
     with open(f'{document_name}_scl.pdf', "wb") as pdf_file:
         write_pdf.write(pdf_file)
     crop(["-x", "300", "-y", "300",

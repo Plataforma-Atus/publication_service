@@ -8,8 +8,10 @@ logging.basicConfig(level=logging.INFO)
 
 def rename_files(result, format_parameters):
     name_with_height = str("{:.1f}".format(float(result['height'])))
-    document_name_with_height = result['file'].replace("height",
-                                                       name_with_height.replace(".", ""))
+    document_name_with_height = result['file'].replace(
+        "height",
+        name_with_height.replace(".", "")
+    )
     document_name_with_height = document_name_with_height.replace("_crp", "mm")
     rename(f"{result['file']}.pdf",
            f"{document_name_with_height}.pdf")
@@ -17,7 +19,7 @@ def rename_files(result, format_parameters):
            f"{document_name_with_height}.jpeg")
     rename(f"{result['file'].replace('_crp', '')}.docx",
            f"{document_name_with_height}.docx")
-    print("--------------------------------------------------------------------")
+
     if format_parameters['extension_out'] != ".docx" \
             and format_parameters['extension_out'] != ".pdf":
         rename(f"{result['file'].replace('_crp', '')}{format_parameters['extension_out']}",
@@ -63,7 +65,6 @@ def manipulate_pdf(format_parameters):
         result = cropper.auto_crop_pdf(format_parameters)
         return calculate_budget(result, format_parameters)
 
-
     elif format_parameters['format_out'] == fstring.formats["commute"][2]:
         commuter.commuter(format_parameters['document_name'], extension_in=fstring.formats["commute"][1],
                           extension_out=fstring.formats["commute"][2])
@@ -88,10 +89,11 @@ def manipulate_docx(format_parameters):
         return
 
 
-def road_map(format_parameters):
+def checking_input_extension(format_parameters):
     if format_parameters['extension_in'] == fstring.formats["commute"][1]:
         logging.info(fstring.message["info"]['conversion_not'])
         result = manipulate_docx(format_parameters)
+
     elif format_parameters['extension_in'] == fstring.formats["commute"][2] \
             or format_parameters['extension_in'] == fstring.formats["commute"][3] \
             or format_parameters['extension_in'] == fstring.formats["commute"][4] \
@@ -116,13 +118,15 @@ def road_map(format_parameters):
     return result
 
 
-def format_parameter(document_name, extension_in, newspaper, publication_type,
-                     column, number_column, days, user_condensation, just_name):
+def format_parameter(
+        document_name: str, extension_in: str, newspaper, publication_type,
+        column, number_column, days, user_condensation, just_name: str
+):
     format_parameters = {
         # File info
-        'document_name': str(document_name),
-        'just_name': str(just_name),
-        'extension_in': str(extension_in),
+        'document_name': document_name,
+        'just_name': just_name,
+        'extension_in': extension_in,
         'extension_out': str(newspaper['format_out']),
         'format_out': str(newspaper['format_out']),
         # Newspaper info
@@ -151,12 +155,15 @@ def format_parameter(document_name, extension_in, newspaper, publication_type,
     }
 
     # Condensation definer
-    if format_parameters[
-        'user_condensation'] != 'default':  # and format_parameters['user_condensation'] => format_parameters['condensation_minimum']:
-        format_parameters['condensation'] = format_parameters['user_condensation']
+    condensation_definer(format_parameters)
 
     # Font definer
     format_parameters['font_name'] = str(fstring.formats['font'][format_parameters['font_index']])
 
     logging.info(format_parameters)
     return format_parameters
+
+
+def condensation_definer(format_parameters):
+    if format_parameters['user_condensation'] != 'default':
+        format_parameters['condensation'] = format_parameters['user_condensation']
