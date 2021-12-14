@@ -55,6 +55,7 @@ def result_width_and_height(format_parameters, number_of_pages, read_pdf, total_
 def cut_out_pdf(document_name, total_height, width, write_pdf):
     with open(f'{document_name}_scl.pdf', "wb") as pdf_file:
         write_pdf.write(pdf_file)
+        breakpoint()
     crop(["-x", "300", "-y", "300",
           "-dcb", "ALL",
           f"{document_name}_scl.pdf",

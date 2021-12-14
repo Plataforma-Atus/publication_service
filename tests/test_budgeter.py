@@ -2,7 +2,6 @@ from publisher.commute.budgeter import (calculate_budget_by_centimeter,
                                         calculate_budget_by_character,
                                         calculate_price_by_centimeter_square,
                                         make_budget)
-from publisher.commute.driver import calculate_budget
 
 
 def test_calculate_budget_by_centimeter(result, format_parameters):

@@ -121,7 +121,7 @@ def checking_input_extension(format_parameters):
 def format_parameter(
         document_name: str, extension_in: str, newspaper, publication_type,
         column, number_column, days, user_condensation, just_name: str
-):
+) -> None:
     format_parameters = {
         # File info
         'document_name': document_name,
@@ -164,6 +164,6 @@ def format_parameter(
     return format_parameters
 
 
-def condensation_definer(format_parameters):
+def condensation_definer(format_parameters) -> None:
     if format_parameters['user_condensation'] != 'default':
         format_parameters['condensation'] = format_parameters['user_condensation']

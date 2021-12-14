@@ -11,7 +11,7 @@ def result():
 
 @pytest.fixture
 def format_parameters_cropper():
-    return {'document_name': 'documents/Atus-Produção/2021/PV-444/12-8/PV-444_Noticiário-A '
+    return {'document_name': 'PV-444_AGazeta-TO_TESTING_Edital_2_2xheight_crp.pdf'
                              'Tribuna_TESTANDO_Edital_1_4xheight', 'just_name':
                 'Atus-Produção/2021/PV-444/12-8/PV-444_Noticiário-A Tribuna_TESTANDO_Edital_1_4xheight', 'extension_in':
                 '.docx', 'extension_out': '.pdf', 'format_out': '.pdf',
@@ -85,17 +85,12 @@ def newspaper():
 
 @pytest.fixture
 def publication_type():
-    return {'name_section': 'Legal - Noticiário - A Tribuna - ES',
-            'newspaper_id': '30bfaa48-36ba-49ce-9d87-0358bb591b26', 'width_1': '5.10', 'width_2': '10.70',
-            'width_3': '16.30', 'width_4': '21.90', 'width_5': '26.70', 'width_6': '0.00', 'width_7': '0.00',
-            'width_8': '0.00', 'width_9': '0.00', 'width_10': '0.00', 'gutter': '0.206', 'height': '36.5',
-            'minimum_height': None, 'maximum_height_budget': None, 'font_name': 1, 'font_name_alternative': 1,
-            'font_size': '6.00', 'font_leading': '6.00', 'font_size_company': '6.00', 'font_leading_company': '6.00',
-            'tracking': '-10', 'condensation': '90.00', 'format_out': '.pdf', 'price_cm': '161.00',
-            'price_cm_square': '161.00', 'price_extra_color': '161.00', 'bold': True, 'italic': True, 'underline': True,
-            'edge': True, 'height_round': True, 'deadline_days': '2021-08-09', 'deadline_hour': 1,
-            'circulate_days': '2021-08-09', 'create_at': '2021-08-09T18:09:48.872Z',
-            'modify_at': '2021-10-07T19:34:01.551Z'}
+    return {'name': '4caaa63a-eb46-4e1f-951a-01843132b0a2',
+            'newspaper_section_id': '4f0bd6df-a07f-4484-b8bd-270c9b404665', 'create_at': '2021-09-27T13:06:17.242Z',
+            'modify_at': '2021-09-27T13:08:14.083Z', 'instructions': '', 'margin': None, 'estimated_budget_delivery': 1,
+            'font_name': 1, 'font_size': '6.00', 'font_leading': '6.00', 'font_size_company': '6.00',
+            'font_leading_company': '6.00', 'bold': True, 'italic': True, 'underline': True, 'tracking': '0',
+            'condensation': '90.00', 'special_format': True, 'format': '1', 'format_type': 'Edital'}
 
 
 @pytest.fixture
@@ -126,3 +121,8 @@ def days():
 @pytest.fixture
 def user_condensation():
     return '99.00'
+
+
+@pytest.fixture
+def document_name_cropper():
+    return 'PV-444_AGazeta-TO_TESTING_Edital_2_2xheight_crp.pdf'

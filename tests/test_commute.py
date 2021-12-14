@@ -1,4 +1,4 @@
-from publisher.commute.driver import manipulate_docx, manipulate_pdf, road_map
+from publisher.commute.driver import checking_input_extension, manipulate_docx, manipulate_pdf
 
 
 def test_driver():
@@ -18,7 +18,7 @@ def test_driver():
         'edge': True, 'bold': True, 'italic': True, 'underline': True, 'font_index': 1, 'font_size': 6.0,
         'font_size_company': 6.0, 'font_leading': 6.0, 'font_leading_company': 6.0, 'font_name': 'Arial'}
 
-    payload_driver = road_map(format_parameters)
+    payload_driver = checking_input_extension(format_parameters)
 
 
 def test_to_default():

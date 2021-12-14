@@ -3,7 +3,7 @@ from django.urls import reverse
 from publisher.commute.driver import format_parameter
 
 
-def test_api(client):
+def test_create_api(client):
     url = reverse("create_publication")
     payload = {'data': ['{"newspaper": [{"model": "publisher.newspapersection", "pk": '
                         '"d8bd0bc1-4587-4996-9da3-c7b4730fe7f7", "fields": {"name_section": "Legal - A Tarde - BA", '
@@ -58,39 +58,16 @@ def test_post_not_found(client):
         "client": "victorhugo"
     }
     url = reverse("create_publication")
-    response = client.post(url, payload)
-    # assert response.json() == expected
-    assert response.status_code == 400
+    response = client.get(url, payload)
+    assert response.status_code == 405
 
 
-def test_format_parameter():
-    document_name = 'documents/Atus-Produção/2021/PV-3/11-30/PV-3_A Tarde-BA_TESTANDO_Sema_2_1xheight'
-    extension_in = '.docx'
-    publication_type = {'name': '92ed96d4-c5f1-41d1-8e7a-ca3d71220113',
-                        'newspaper_section_id': 'd8bd0bc1-4587-4996-9da3-c7b4730fe7f7',
-                        'create_at': '2021-10-13T13:09:30.786Z', 'modify_at': '2021-10-13T13:24:16.590Z',
-                        'instructions': '', 'margin': None, 'estimated_budget_delivery': 1, 'font_name': 1,
-                        'font_size': '6.00', 'font_leading': '6.00', 'font_size_company': '6.00',
-                        'font_leading_company': '6.00', 'bold': True, 'italic': True, 'underline': True,
-                        'tracking': '-10', 'condensation': '90.00', 'special_format': True, 'format': '2'}
-    column = '4.3'
-    number_column = '1'
-    days = '2'
-    user_condensation = '87.00'
-    just_name = 'Atus-Produção/2021/PV-3/11-30/PV-3_A Tarde-BA_TESTANDO_Sema_2_1xheight'
-    newspaper = {'name_section': 'Legal - A Tarde - BA', 'newspaper_id': 'b84843d2-353c-4543-b913-b038ef66a5eb',
-                 'width_1': '4.30', 'width_2': '9.20', 'width_3': '14.00', 'width_4': '18.80', 'width_5': '23.60',
-                 'width_6': '28.50', 'width_7': '0.00', 'width_8': '0.00', 'width_9': '0.00', 'width_10': '0.00',
-                 'gutter': '0.206', 'height': '52.0', 'minimum_height': None, 'maximum_height_budget': None,
-                 'font_name': 1, 'font_name_alternative': 1, 'font_size': '6.00', 'font_leading': '6.00',
-                 'font_size_company': '6.00', 'font_leading_company': '6.00', 'tracking': '-10',
-                 'condensation': '90.00', 'format_out': '.pdf', 'price_cm': '150.00', 'price_cm_square': '150.00',
-                 'price_extra_color': '150.00', 'bold': True, 'italic': True, 'underline': True, 'edge': True,
-                 'height_round': True, 'deadline_days': '2021-10-13', 'deadline_hour': 17,
-                 'circulate_days': '2021-10-13', 'create_at': '2021-10-13T12:51:43.506Z',
-                 'modify_at': '2021-10-13T13:23:40.805Z'}
+def test_format_parameter(document_name_cropper, newspaper, publication_type, column, number_column, days,
+                          user_condensation, just_name, extension_in):
 
-    payload_format = format_parameter(document_name, extension_in, newspaper, publication_type,
-                                      column, number_column, days, user_condensation, just_name)
+    payload_format = format_parameter(document_name=document_name_cropper, extension_in=extension_in,
+                                      newspaper=newspaper, publication_type=publication_type,
+                                      column=column, number_column=number_column, days=days,
+                                      user_condensation=user_condensation, just_name=just_name)
 
     assert payload_format
