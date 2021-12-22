@@ -1,73 +1,181 @@
-from django.urls import reverse
-
-from publisher.commute.driver import format_parameter
+import requests
 
 
-def test_create_api(client):
-    url = reverse("create_publication")
-    payload = {'data': ['{"newspaper": [{"model": "publisher.newspapersection", "pk": '
-                        '"d8bd0bc1-4587-4996-9da3-c7b4730fe7f7", "fields": {"name_section": "Legal - A Tarde - BA", '
-                        '"newspaper_id": "b84843d2-353c-4543-b913-b038ef66a5eb", "width_1": "4.30", "width_2": '
-                        '"9.20", "width_3": "14.00", "width_4": "18.80", "width_5": "23.60", "width_6": "28.50", '
-                        '"width_7": "0.00", "width_8": "0.00", "width_9": "0.00", "width_10": "0.00", '
-                        '"gutter": "0.206", "height": "52.0", "minimum_height": null, "maximum_height_budget": null, '
-                        '"font_name": 1, "font_name_alternative": 1, "font_size": "6.00", "font_leading": "6.00", '
-                        '"font_size_company": "6.00", "font_leading_company": "6.00", "tracking": "-10", '
-                        '"condensation": "90.00", "format_out": ".pdf", "price_cm": "150.00", "price_cm_square": '
-                        '"150.00", "price_extra_color": "150.00", "bold": true, "italic": true, "underline": true, '
-                        '"edge": true, "height_round": true, "deadline_days": "2021-10-13", "deadline_hour": 17, '
-                        '"circulate_days": "2021-10-13", "create_at": "2021-10-13T12:51:43.506Z", "modify_at": '
-                        '"2021-10-13T13:23:40.805Z"}}], "publication_type": [{"model": "publisher.publicationtype", '
-                        '"pk": "50347dfc-bd32-4bbc-a8e0-b61663fdfc7f", "fields": {"name": '
-                        '"92ed96d4-c5f1-41d1-8e7a-ca3d71220113", "newspaper_section_id": '
-                        '"d8bd0bc1-4587-4996-9da3-c7b4730fe7f7", "create_at": "2021-10-13T13:09:30.786Z", '
-                        '"modify_at": "2021-10-13T13:24:16.590Z", "instructions": "", "margin": null, '
-                        '"estimated_budget_delivery": 1, "font_name": 1, "font_size": "6.00", "font_leading": "6.00", '
-                        '"font_size_company": "6.00", "font_leading_company": "6.00", "bold": true, "italic": true, '
-                        '"underline": true, "tracking": "-10", "condensation": "90.00", "special_format": true, '
-                        '"format": "2"}}], "client": [{"model": "publisher.client", '
-                        '"pk": "d1cf4ecd-bf96-42ce-ab29-2238e22677a8", "fields": {"name": '
-                        '"Atus-Produ\\u00e7\\u00e3o", "email": "felipe.francisco@atus.com.br", "phone": "1199999999", '
-                        '"phone_secondary": "1199999998", "cellphone": "11999999997", "create_at": '
-                        '"2021-10-11T22:12:34.558Z", "modify_at": "2021-10-11T22:12:34.558Z"}}], "column": "width_3", '
-                        '"pv_os": "PV", "pvos_number": "2", "days": "1", "user_condensation": "80.00", '
-                        '"title": "fdfdfdfdf", "publication_type_name": "Sema", "extension_in": ".docx"}']}
-    response = client.post(url, data=payload)
+def test_create_docx(payload):
+    url = 'http://localhost:8003/create_publication'
 
+    file = 'tests/PV-7543.docx'
 
-def test_create_publication_bad_request(client):
-    url = reverse("create_publication")
-    response = client.get(url)
-    assert response.status_code == 405
+    files = {'file': open(file, 'rb')}
 
-
-def test_post_not_found(client):
-    payload = {
-        "newspaper": "test",
-        "newspaper_name": "test1",
-        "publication_type": "test3",
-        "publication_type_name":
-            "testando",
-        "pv_os": "1.2",
-        "pvos_number": "123",
-        "title": "titulo",
-        "days": "1",
-        "number_column": "234",
-        "extension_in": "pdf",
-        "user_condensation": "sim",
-        "client": "victorhugo"
+    response = requests.post(url, data=payload, files=files)
+    expected_payload = {
+        'file': 'documents/Atus-Teste/2021/PV-2/12-21/PV-2_BrasíliaAgora'
+                '-DF_QWEQWEQW_Sema_2_3x70mm', 'width': '14.60', 'height': '7.00',
+        'price': '3150.00', 'price_by_cm': '30.82', 'newspaper': 'Particulares - Brasília '
+                                                                 'Agora - DF', 'chars_count':
+            4875, 'format_out': '.pdf'
     }
-    url = reverse("create_publication")
-    response = client.get(url, payload)
-    assert response.status_code == 405
+
+    assert response.json() == expected_payload
+    assert response.status_code == 200
 
 
-def test_format_parameter(document_name_cropper, newspaper, publication_type, column, number_column, days,
-                          user_condensation, just_name, extension_in):
+def test_create_diario_cuiaba(payload_diario_de_cuiba):
+    url = 'http://localhost:8003/create_publication'
 
-    payload_format = format_parameter(document_name=document_name_cropper, extension_in=extension_in,
-                                      newspaper=newspaper, publication_type=publication_type,
-                                      column=column, number_column=number_column, days=days,
-                                      user_condensation=user_condensation, just_name=just_name)
+    file = 'tests/PV-7543.docx'
 
-    assert payload_format
+    files = {'file': open(file, 'rb')}
+
+    response = requests.post(url, data=payload_diario_de_cuiba, files=files)
+    expected_payload = {'file': 'documents/Atus-Teste/2021/PV-4/12-21/PV-4_DC-MT_PDF_Edital_1_2x110mm', 'width': '5.60',
+                        'height': '11.00', 'price': '3300.00', 'price_by_cm': '53.57',
+                        'newspaper': 'Terceiros - DC - MT', 'chars_count': 4845, 'format_out': '.pdf'}
+
+    assert response.json() == expected_payload
+    assert response.status_code == 200
+
+
+def test_create_folha_sp(payload_folha_sp):
+    url = 'http://localhost:8003/create_publication'
+
+    file = 'tests/PV-7543.docx'
+
+    files = {'file': open(file, 'rb')}
+
+    response = requests.post(url, data=payload_folha_sp, files=files)
+    expected_payload = {'file': 'documents/Atus-Teste/2021/PV-4/12-21/PV-4_Folha-SP_PDF_Sema_1_1x190mm',
+                        'width': '4.60', 'height': '19.00', 'price': '19.00', 'price_by_cm': '0.22',
+                        'newspaper': 'Empresarial - Folha - SP', 'chars_count': 4875, 'format_out': '.pdf'}
+
+    assert response.json() == expected_payload
+    assert response.status_code == 200
+
+
+def test_create_mato_grosso(payload_mato_grosso):
+    url = 'http://localhost:8003/create_publication'
+
+    file = 'tests/PV-7543.docx'
+
+    files = {'file': open(file, 'rb')}
+
+    response = requests.post(url, data=payload_mato_grosso, files=files)
+    expected_payload = {'file': 'documents/Atus-Teste/2021/PV-4/12-21/PV-4_DOMT-MT_PDF_Edital_1_1x161mm',
+                        'width': '9.40', 'height': '16.15', 'price': '145.35', 'price_by_cm': '0.96',
+                        'newspaper': 'Terceiros - DOMT - MT', 'chars_count': 4836, 'format_out': '.docx'}
+
+    assert response.json() == expected_payload
+    assert response.status_code == 200
+
+
+def test_create_ro(payload_ro):
+    url = 'http://localhost:8003/create_publication'
+
+    file = 'tests/PV-7543.docx'
+
+    files = {'file': open(file, 'rb')}
+
+    response = requests.post(url, data=payload_ro, files=files)
+    expected_payload = {'file': 'documents/Atus-Teste/2021/PV-4/12-21/PV-4_DORO-RO_PDF_Edital_1_1x200mm',
+                        'width': '9.00', 'height': '20.00', 'price': '870.48', 'price_by_cm': '4.84',
+                        'newspaper': 'Terceiros - DORO - RO', 'chars_count': 4836, 'format_out': '.pdf'}
+
+    assert response.json() == expected_payload
+    assert response.status_code == 200
+
+
+def test_create_parana(payload_parana):
+    url = 'http://localhost:8003/create_publication'
+
+    file = 'tests/PV-7543.docx'
+
+    files = {'file': open(file, 'rb')}
+
+    response = requests.post(url, data=payload_parana, files=files)
+    expected_payload = {'file': 'documents/Atus-Teste/2021/PV-4/12-21/PV-4_DOPR-PR_PDF_Ata_1_1x150mm', 'width': '8.01',
+                        'height': '15.00', 'price': '450.00', 'price_by_cm': '3.75',
+                        'newspaper': 'Comércio, Indústria e Serviços - DOPR - PR', 'chars_count': 4725,
+                        'format_out': '.pdf'}
+
+    assert response.json() == expected_payload
+    assert response.status_code == 200
+
+
+def test_create_pernambuco(payload_pe):
+    url = 'http://localhost:8003/create_publication'
+
+    file = 'tests/PV-7543.docx'
+
+    files = {'file': open(file, 'rb')}
+
+    response = requests.post(url, data=payload_pe, files=files)
+    expected_payload = {'file': 'documents/Atus-Teste/2021/PV-4/12-21/PV-4_DiáriodePernambuco-PE_PDF_Sema_1_2x130mm',
+                        'width': '6.27', 'height': '13.00', 'price': '3900.00', 'price_by_cm': '47.85',
+                        'newspaper': 'Classificados - Diário de Pernambuco - PE', 'chars_count': 4875,
+                        'format_out': '.pdf'}
+
+    assert response.json() == expected_payload
+    assert response.status_code == 200
+
+
+def test_create_df(payload_df):
+    url = 'http://localhost:8003/create_publication'
+
+    file = 'tests/PV-7543.docx'
+
+    files = {'file': open(file, 'rb')}
+
+    response = requests.post(url, data=payload_df, files=files)
+    expected_payload = {'file': 'documents/Atus-Teste/2021/PV-4/12-21/PV-4_BrasíliaAgora-DF_PDF_Edital_1_1x190mm',
+                        'width': '4.60', 'height': '19.00', 'price': '2850.00', 'price_by_cm': '32.61',
+                        'newspaper': 'Particulares - Brasília Agora - DF', 'chars_count': 4836, 'format_out': '.pdf'}
+
+    assert response.json() == expected_payload
+    assert response.status_code == 200
+
+
+def test_create_minas_gerais(payload_minas_gerais):
+    url = 'http://localhost:8003/create_publication'
+
+    file = 'tests/PV-7543.docx'
+
+    files = {'file': open(file, 'rb')}
+
+    response = requests.post(url, data=payload_minas_gerais, files=files)
+    expected_payload = {'file': 'documents/Atus-Teste/2021/PV-4/12-21/PV-4_DOMG-MG_PDF_Edital_1_2x60mm',
+                        'width': '12.49', 'height': '6.00', 'price': '1075.08', 'price_by_cm': '14.35',
+                        'newspaper': 'Particulares - DOMG - MG', 'chars_count': 4836, 'format_out': '.rtf'}
+
+    assert response.json() == expected_payload
+    assert response.status_code == 200
+
+
+def test_create_minas_gerais(payload_amazonas):
+    url = 'http://localhost:8003/create_publication'
+
+    file = 'tests/PV-7543.docx'
+
+    files = {'file': open(file, 'rb')}
+
+    response = requests.post(url, data=payload_amazonas, files=files)
+    expected_payload = {'file': 'documents/Atus-Teste/2021/PV-4/12-21/PV-4_DOAM-AM_PDF_Edital_1_1x190mm',
+                        'width': '9.49', 'height': '19.00', 'price': '1482.00', 'price_by_cm': '8.22',
+                        'newspaper': 'Particulares - DOAM - AM', 'chars_count': 4836, 'format_out': '.docx'}
+
+    assert response.json() == expected_payload
+    assert response.status_code == 200
+
+
+def test_create_maranhao(payload_maranhao):
+    url = 'http://localhost:8003/create_publication'
+
+    file = 'tests/PV-7543.docx'
+
+    files = {'file': open(file, 'rb')}
+
+    response = requests.post(url, data=payload_maranhao, files=files)
+    expected_payload = {'file': 'documents/Atus-Teste/2021/PV-4/12-21/PV-4_DOMA-MA_PDF_Sema_1_2x100mm', 'width': '17.00', 'height': '10.00', 'price': '140.00', 'price_by_cm': '0.82', 'newspaper': 'Terceiros - DOMA - MA', 'chars_count': 4875, 'format_out': '.rtf'}
+
+    assert response.json() == expected_payload
+    assert response.status_code == 200

@@ -17,27 +17,26 @@ class require:
             if request.method != 'POST':
                 return HttpResponseNotAllowed(permitted_methods=('post',))
 
-            try:
-                data = loads(request.POST.get('data'))
-                newspaper = data['newspaper'][0]['fields']
-                newspaper_name = newspaper['name_section'].split(' - ')
-                publication_type = data['publication_type'][0]['fields']
-                publication_type['format_type'] = data['publication_type_name']
-                column = newspaper[data['column']]
-                number_column = sub(r'[^\d]', '', data['column'])
+            data = loads(request.POST.get('data'))
+            newspaper = data['newspaper'][0]['fields']
+            newspaper_name = newspaper['name_section'].split(' - ')
+            publication_type = data['publication_type'][0]['fields']
+            publication_type['format_type'] = data['publication_type_name']
+            column = newspaper[data['column']]
+            number_column = sub(r'[^\d]', '', data['column'])
 
-                pv_os = data['pv_os']
-                pvos_number = data['pvos_number']
-                title = data['title'].replace(" ", "")
-                days = data['days']
-                extension_in = data['extension_in']
-                user_condensation = data['user_condensation']
-                client = data['client'][0]['fields']['name']
+            pv_os = data['pv_os']
 
-                file = request.FILES['file']
-                newspaper_name[1] = newspaper_name[1].replace(" ", "")
-            except MultiValueDictKeyError as e:
-                return 'invalido'
+            pvos_number = data['pvos_number']
+            title = data['title'].replace(" ", "")
+
+            days = data['days']
+            extension_in = data['extension_in']
+            user_condensation = data['user_condensation']
+            client = data['client'][0]['fields']['name']
+
+            file = request.FILES['file']
+            newspaper_name[1] = newspaper_name[1].replace(" ", "")
 
             return view(
                 request, data, newspaper, newspaper_name, publication_type, column, number_column, pv_os, pvos_number,
