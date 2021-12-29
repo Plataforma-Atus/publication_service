@@ -17,6 +17,8 @@ class require:
             if request.method != 'POST':
                 return HttpResponseNotAllowed(permitted_methods=('post',))
 
+            #breakpoint()
+
             data = loads(request.POST.get('data'))
             newspaper = data['newspaper'][0]['fields']
             newspaper_name = newspaper['name_section'].split(' - ')
