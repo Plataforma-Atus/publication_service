@@ -1,7 +1,11 @@
 import logging
 from os import rename
 
-from publisher.commute import budgeter, commuter, cropper, fstring, standarder
+from publisher.commute import cropper, fstring, standarder
+
+from publisher.commute.commuter import ConvertingFile
+
+from publisher.commute.budgeter import Budget
 
 logging.basicConfig(level=logging.INFO)
 
@@ -38,11 +42,11 @@ def rename_files(result, format_parameters):
 
 def calculate_budget(result, format_parameters):
     if format_parameters['name_section'] in fstring.newspapers['budget_by_character']:
-        budgeter.calculate_budget_by_character(result, format_parameters)
-        budgeter.calculate_price_by_centimeter_square(result, format_parameters)
+        Budget.calculate_budget_by_character(result, format_parameters)
+        Budget.calculate_price_by_centimeter_square(result, format_parameters)
     else:
-        budgeter.calculate_budget_by_centimeter(result, format_parameters)
-        budgeter.calculate_price_by_centimeter_square(result, format_parameters)
+        Budget.calculate_budget_by_centimeter(result, format_parameters)
+        Budget.calculate_price_by_centimeter_square(result, format_parameters)
     result['newspaper'] = format_parameters['name_section']
     result['chars_count'] = format_parameters['chars_count']
 
@@ -52,24 +56,24 @@ def calculate_budget(result, format_parameters):
 def manipulate_pdf(format_parameters):
     if format_parameters['format_out'] == fstring.formats["commute"][1] \
             or format_parameters['format_out'] == fstring.formats["commute"][4]:
-        commuter.commuter(format_parameters['document_name'], extension_in=fstring.formats["commute"][1],
-                          extension_out=fstring.formats["commute"][4])
+        ConvertingFile.commuter(format_parameters['document_name'], extension_in=fstring.formats["commute"][1],
+                                extension_out=fstring.formats["commute"][4])
         result = cropper.auto_crop_pdf(format_parameters)
         return calculate_budget(result, format_parameters)
 
     elif format_parameters['format_out'] == fstring.formats["commute"][3]:
-        commuter.commuter(format_parameters['document_name'], extension_in=fstring.formats["commute"][1],
-                          extension_out=fstring.formats["commute"][3])
-        commuter.commuter(format_parameters['document_name'], extension_in=fstring.formats["commute"][3],
-                          extension_out=fstring.formats["commute"][4])
+        ConvertingFile.commuter(format_parameters['document_name'], extension_in=fstring.formats["commute"][1],
+                                extension_out=fstring.formats["commute"][3])
+        ConvertingFile.commuter(format_parameters['document_name'], extension_in=fstring.formats["commute"][3],
+                                extension_out=fstring.formats["commute"][4])
         result = cropper.auto_crop_pdf(format_parameters)
         return calculate_budget(result, format_parameters)
 
     elif format_parameters['format_out'] == fstring.formats["commute"][2]:
-        commuter.commuter(format_parameters['document_name'], extension_in=fstring.formats["commute"][1],
-                          extension_out=fstring.formats["commute"][2])
-        commuter.commuter(format_parameters['document_name'], extension_in=fstring.formats["commute"][2],
-                          extension_out=fstring.formats["commute"][4])
+        ConvertingFile.commuter(format_parameters['document_name'], extension_in=fstring.formats["commute"][1],
+                                extension_out=fstring.formats["commute"][2])
+        ConvertingFile.commuter(format_parameters['document_name'], extension_in=fstring.formats["commute"][2],
+                                extension_out=fstring.formats["commute"][4])
         result = cropper.auto_crop_pdf(format_parameters)
         return calculate_budget(result, format_parameters)
 
@@ -90,25 +94,23 @@ def manipulate_docx(format_parameters):
 
 
 def checking_input_extension(format_parameters):
-    if format_parameters['extension_in'] == fstring.formats["commute"][1]:
+    extension_in = format_parameters['extension_in'].replace(" ", "")
+    if extension_in == fstring.formats["commute"][1]:
         logging.info(fstring.message["info"]['conversion_not'])
         result = manipulate_docx(format_parameters)
 
-    elif format_parameters['extension_in'] == fstring.formats["commute"][2] \
-            or format_parameters['extension_in'] == fstring.formats["commute"][3] \
-            or format_parameters['extension_in'] == fstring.formats["commute"][4] \
-            or format_parameters['extension_in'] == fstring.formats["commute"][5] \
-            or format_parameters['extension_in'] == fstring.formats["commute"][6]:
+    elif format_parameters['extension_in'] == fstring.formats["commute"]:
+        breakpoint()
 
-        commuter.commuter(format_parameters['document_name'],
-                          format_parameters['extension_in'],
-                          fstring.formats["commute"][1])
+        ConvertingFile.commuter(format_parameters['document_name'],
+                                format_parameters['extension_in'],
+                                fstring.formats["commute"][1])
         result = manipulate_docx(format_parameters)
 
         if format_parameters['extension_in'] != fstring.formats["commute"][1]:
-            commuter.commuter(format_parameters['document_name'],
-                              fstring.formats["commute"][1],
-                              format_parameters['extension_out'])
+            ConvertingFile.commuter(format_parameters['document_name'],
+                                    fstring.formats["commute"][1],
+                                    format_parameters['extension_out'])
 
     else:
         logging.info(fstring.message["exception"]['format_allowed'], "- driver.driver")
@@ -121,7 +123,7 @@ def checking_input_extension(format_parameters):
 def format_parameter(
         document_name: str, extension_in: str, newspaper, publication_type,
         column, number_column, days, user_condensation, just_name: str
-) -> None:
+):
     format_parameters = {
         # File info
         'document_name': document_name,
@@ -160,7 +162,7 @@ def format_parameter(
     # Font definer
     format_parameters['font_name'] = str(fstring.formats['font'][format_parameters['font_index']])
 
-    logging.info(format_parameters)
+    print(format_parameters)
     return format_parameters
 
 

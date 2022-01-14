@@ -72,6 +72,7 @@ python-docx = { git = "https://github.com/phgrigorio/python-docx", branch = "mas
 pytest-django = "^4.4.0"
 pytest-cov = "^3.0.0"
 isort = "^5.10.1"
+gunicorn = "^20.1.0"
 
 [tool.poetry.dev-dependencies]
 

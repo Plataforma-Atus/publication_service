@@ -1,7 +1,5 @@
 import pytest
 
-from publisher.commute.budgeter import calculate_budget_by_centimeter
-
 
 @pytest.fixture
 def result():

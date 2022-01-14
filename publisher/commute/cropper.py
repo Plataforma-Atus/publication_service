@@ -17,9 +17,8 @@ def read_pdf_size(document_name, format_parameters):
     with open(f'{document_name}.pdf', "rb") as pdf_file:
         read_pdf = PdfFileReader(f'{document_name}.pdf')
     number_of_pages = read_pdf.getNumPages()
-    total_height = 0
-    width = 0
-
+    total_height: int = 0
+    width: int = 0
     total_height, width = result_width_and_height(format_parameters, number_of_pages, read_pdf, total_height, width,
                                                   write_pdf)
 
@@ -31,8 +30,8 @@ def result_width_and_height(format_parameters, number_of_pages, read_pdf, total_
     for page_number in range(number_of_pages):
         page = read_pdf.getPage(page_number)
 
-        width = float(page.mediaBox.getWidth()) * 0.3527780 / 10  # Convert user unit to cm
-        height = float(page.mediaBox.getHeight()) * 0.3527780 / 10  # Convert user unit to cm
+        width: float = float(page.mediaBox.getWidth()) * 0.3527780 / 10  # Convert user unit to cm
+        height: float = float(page.mediaBox.getHeight()) * 0.3527780 / 10  # Convert user unit to cm
 
         if (format_parameters['height_round']) is True:
             rounded_height = ceil(height)
@@ -43,7 +42,7 @@ def result_width_and_height(format_parameters, number_of_pages, read_pdf, total_
         write_pdf.addBlankPage(1, 1)
         write_page = write_pdf.getPage(page_number)
         write_page.mergeScaledPage(page, 1, True)
-        total_height = total_height + float(height)
+        total_height: float = total_height + float(height)
         logging.info(
             "Page:", page_number, "-",
             "Height(cm):", "{:.2f}".format(float(height)), "-",
