@@ -40,8 +40,3 @@ def test_to_default():
 
     default_payload = manipulate_docx(format_parameters)
 
-
-def test_manipulate_pdf(format_parameters):
-    default_payload = manipulate_pdf(format_parameters)
-
-    assert True
