@@ -48,13 +48,13 @@ def extract_text(format_parameters):
     format_parameters['texts_flowing'] = ''
 
     if format_parameters['format_allowed'] == '2':
-        index = 0
+        index: int = 0
         format_parameters['texts_flowing'] = format_parameters['docx_default'].paragraphs[0]
     elif format_parameters['format_allowed'] in ['1', '2']:
-        index = 1
+        index: int = 1
         format_parameters['texts_flowing'] = format_parameters['docx_default'].add_paragraph()
     else:
-        index = 3
+        index: int = 3
         format_parameters['texts_flowing'] = format_parameters['docx_default'].add_paragraph()
 
     format_parameters['texts_flowing'].paragraph_format.tab_stops.add_tab_stop(
@@ -64,7 +64,7 @@ def extract_text(format_parameters):
     for idx, format_parameters['paragraph'] in enumerate(format_parameters['document'].paragraphs):
         if index > 0:
             if format_parameters['paragraph'].text != '':
-                index = index - 1
+                index: int = index - 1
         else:
             if format_parameters['paragraph'].text != '':
                 run_text(format_parameters)
@@ -73,7 +73,7 @@ def extract_text(format_parameters):
 def insert_date(format_parameters):
     docx_default = format_parameters['docx_default']
     if format_parameters['name_section'] in fstring.newspapers['insert_date']:
-        date_today = date.today()
+        date_today: date = date.today()
         docx_default.paragraphs[-1].add_run('\t')
         logging.info(format_parameters['days'])
 
@@ -227,12 +227,12 @@ def format_page(format_parameters):
 
 def add_edge(format_parameters, i):
     if format_parameters['edge'] is True:
-        border_size = 4
-        border_space = 1
-        border_indent = 0.05
+        border_size: int = 4
+        border_space: int = 1
+        border_indent: float = 0.05
         if format_parameters['name_section'] == "Terceiros - DOBA - BA":
-            border_space = 4
-            border_indent = 1
+            border_space: int = 4
+            border_indent: int = 1
         format_parameters['docx_default'].paragraphs[i].paragraph_format.left_indent = Cm(border_indent)
         format_parameters['docx_default'].paragraphs[i].paragraph_format.right_indent = Cm(border_indent)
         format_parameters['docx_default'].paragraphs[i].paragraph_format.border_top(border_size, border_space)
@@ -245,19 +245,19 @@ def add_edge(format_parameters, i):
 def special_adjust(format_parameters):
     if format_parameters['name_section'] in fstring.newspapers['special_format_a4']:
         docx_default = format_parameters['docx_default']
-        column = 21
+        column: int = 21
         docx_default.sections[0].page_width = Cm(column)
-        document_right_margin = 0
+        document_right_margin: int = 0
         if format_parameters['number_column'] == "1":
-            document_right_margin = 13
+            document_right_margin: int = 13
         elif format_parameters['number_column'] == "2":
-            document_right_margin = 4
+            document_right_margin: int = 4
         docx_default.sections[0].right_margin = Cm(document_right_margin)
 
 
 def save_document(format_parameters):
     format_parameters['docx_default'].save(format_parameters['document_name'] + '.docx')
-    chars_count = 0
+    chars_count: int = 0
     for p in format_parameters['docx_default'].paragraphs:
         format_parameters['chars_count'] = chars_count + len(p.text)
     logging.info(fstring.message["info"]['docx_success'])

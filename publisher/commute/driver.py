@@ -12,47 +12,53 @@ from publisher.commute.budgeter import Budget
 logging.basicConfig(level=logging.INFO)
 
 
-def rename_files(result, format_parameters):
-    name_with_height: str = str("{:.1f}".format(float(result['height'])))
-    document_name_with_height = result['file'].replace(
-        "height",
-        name_with_height.replace(".", "")
-    )
-    document_name_with_height = document_name_with_height.replace("_crp", "mm")
-    rename(f"{result['file']}.pdf",
-           f"{document_name_with_height}.pdf")
-    rename(f"{result['file']}.jpeg",
-           f"{document_name_with_height}.jpeg")
-    rename(f"{result['file'].replace('_crp', '')}.docx",
-           f"{document_name_with_height}.docx")
+class Rename:
 
-    if format_parameters['extension_out'] != ".docx" \
-            and format_parameters['extension_out'] != ".pdf":
-        rename(f"{result['file'].replace('_crp', '')}{format_parameters['extension_out']}",
-               f"{document_name_with_height}{format_parameters['extension_out']}")
-    if format_parameters['extension_in'] != ".docx" \
-            and format_parameters['extension_in'] != ".pdf" \
-            and format_parameters['extension_in'] != format_parameters['extension_out']:
-        rename(f"{result['file'].replace('_crp', '')}{format_parameters['extension_in']}",
-               f"{document_name_with_height}{format_parameters['extension_in']}")
-    result['file'] = document_name_with_height.replace('_crp', '')
-    logging.info(document_name_with_height)
-    format_parameters['document_name_with_height'] = document_name_with_height
-    DocumentAdjustments.convert_pdf_to_greyscale(format_parameters)
-    return result
+    @staticmethod
+    def files(result, format_parameters):
+        name_with_height: str = str("{:.1f}".format(float(result['height'])))
+        document_name_with_height = result['file'].replace(
+            "height",
+            name_with_height.replace(".", "")
+        )
+        document_name_with_height = document_name_with_height.replace("_crp", "mm")
+        rename(f"{result['file']}.pdf",
+               f"{document_name_with_height}.pdf")
+        rename(f"{result['file']}.jpeg",
+               f"{document_name_with_height}.jpeg")
+        rename(f"{result['file'].replace('_crp', '')}.docx",
+               f"{document_name_with_height}.docx")
+
+        if format_parameters['extension_out'] != ".docx" \
+                and format_parameters['extension_out'] != ".pdf":
+            rename(f"{result['file'].replace('_crp', '')}{format_parameters['extension_out']}",
+                   f"{document_name_with_height}{format_parameters['extension_out']}")
+        if format_parameters['extension_in'] != ".docx" \
+                and format_parameters['extension_in'] != ".pdf" \
+                and format_parameters['extension_in'] != format_parameters['extension_out']:
+            rename(f"{result['file'].replace('_crp', '')}{format_parameters['extension_in']}",
+                   f"{document_name_with_height}{format_parameters['extension_in']}")
+        result['file'] = document_name_with_height.replace('_crp', '')
+        logging.info(document_name_with_height)
+        format_parameters['document_name_with_height'] = document_name_with_height
+        DocumentAdjustments.convert_pdf_to_greyscale(format_parameters)
+        return result
 
 
-def calculate_budget(result, format_parameters):
-    if format_parameters['name_section'] in fstring.newspapers['budget_by_character']:
-        Budget.calculate_budget_by_character(result, format_parameters)
-        Budget.calculate_price_by_centimeter_square(result, format_parameters)
-    else:
-        Budget.calculate_budget_by_centimeter(result, format_parameters)
-        Budget.calculate_price_by_centimeter_square(result, format_parameters)
-    result['newspaper'] = format_parameters['name_section']
-    result['chars_count'] = format_parameters['chars_count']
+class Calculate:
 
-    return rename_files(result, format_parameters)
+    @staticmethod
+    def budget(result, format_parameters):
+        if format_parameters['name_section'] in fstring.newspapers['budget_by_character']:
+            Budget.calculate_budget_by_character(result, format_parameters)
+            Budget.calculate_price_by_centimeter_square(result, format_parameters)
+        else:
+            Budget.calculate_budget_by_centimeter(result, format_parameters)
+            Budget.calculate_price_by_centimeter_square(result, format_parameters)
+        result['newspaper'] = format_parameters['name_section']
+        result['chars_count'] = format_parameters['chars_count']
+
+        return Rename.files(result, format_parameters)
 
 
 class Manipulation:
@@ -65,7 +71,7 @@ class Manipulation:
                 extension_out=fstring.formats["commute"][4]
             )
             result = DocumentAdjustments.auto_crop_pdf(format_parameters)
-            return calculate_budget(result, format_parameters)
+            return Calculate.budget(result, format_parameters)
 
         elif format_parameters['format_out'] == fstring.formats["commute"][3]:
             ConvertingFile.commuter(
@@ -77,7 +83,7 @@ class Manipulation:
                 extension_out=fstring.formats["commute"][4]
             )
             result = DocumentAdjustments.auto_crop_pdf(format_parameters)
-            return calculate_budget(result, format_parameters)
+            return Calculate.budget(result, format_parameters)
 
         elif format_parameters['format_out'] == fstring.formats["commute"][2]:
             ConvertingFile.commuter(
@@ -89,7 +95,7 @@ class Manipulation:
                 extension_out=fstring.formats["commute"][4]
             )
             result = DocumentAdjustments.auto_crop_pdf(format_parameters)
-            return calculate_budget(result, format_parameters)
+            return Calculate.budget(result, format_parameters)
 
         else:
             logging.info(fstring.message["exception"]['format'])
