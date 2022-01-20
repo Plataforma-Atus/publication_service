@@ -48,6 +48,8 @@ class require:
 
 
 class Formatting:
+
+    @staticmethod
     def formatting_file_path(
             client, date_file, days, extension_in, newspaper_name, number_column, publication_type, pv_os,
             pvos_number, title

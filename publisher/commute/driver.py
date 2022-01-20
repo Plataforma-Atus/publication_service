@@ -1,7 +1,8 @@
 import logging
 from os import rename
 
-from publisher.commute import fstring, standarder
+from publisher.commute import fstring
+from publisher.commute.standarder import Standardizer
 
 from publisher.commute.cropper import DocumentAdjustments
 
@@ -103,7 +104,7 @@ class Manipulation:
     @staticmethod
     def docx(format_parameters: dict):
         try:
-            format_parameters['chars_count'] = standarder.standardizer_docx(format_parameters)
+            format_parameters['chars_count'] = Standardizer.docx(format_parameters)
             return Manipulation.pdf(format_parameters)
 
         except Exception as unknown_error:
