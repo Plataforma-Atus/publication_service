@@ -141,7 +141,8 @@ def read_text(format_parameters):
             if format_parameters['text_index'] > 0:
                 format_parameters['initial_paragraph'].text = sub('  +', ' ',
                                                                   format_parameters['initial_paragraph'].text)
-                if format_parameters['initial_paragraph'].text != '' and format_parameters['initial_paragraph'].text != ' ':
+                if format_parameters['initial_paragraph'].text != '' and format_parameters[
+                    'initial_paragraph'].text != ' ':
                     format_parameters['text_index'] = format_parameters['text_index'] - 1
                     if format_parameters['docx_default'].paragraphs[0].text == '':
                         format_parameters['docx_default'].paragraphs[0].text = format_parameters[
@@ -163,69 +164,72 @@ def read_text(format_parameters):
                 break
 
 
-def format_text_head(i, format_parameters):
-    if format_parameters['format_allowed'] == "0":
+class Format:
 
-        if i < 3:
+    @staticmethod
+    def format_text_head(i, format_parameters):
+        if format_parameters['format_allowed'] == "0":
+
+            if i < 3:
+                format_parameters['docx_default'].paragraphs[i].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+                format_parameters['texts'].bold = format_parameters['bold']
+                if format_parameters['name_section'] in fstring.newspapers['special_format_head_spaced']:
+                    format_parameters['docx_default'].paragraphs[i].paragraph_format.space_after = Pt(1.1)
+
+            if i == 0:
+                format_parameters['texts'].font.size = Pt(format_parameters['font_size_company'])
+                format_parameters['docx_default'].paragraphs[i].paragraph_format.line_spacing = Pt(
+                    format_parameters['font_leading_company'])
+
+            if i == 2 and format_parameters['name_section'] in fstring.newspapers['special_format_head_spaced']:
+                format_parameters['docx_default'].paragraphs[i].paragraph_format.line_spacing = Pt(13)
+                format_parameters['texts'].font.size = Pt(12)
+
+            if i == 1:
+                format_parameters['texts'].bold = False
+
+        elif format_parameters['format_allowed'] == "1" and i < 1:
             format_parameters['docx_default'].paragraphs[i].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
             format_parameters['texts'].bold = format_parameters['bold']
-            if format_parameters['name_section'] in fstring.newspapers['special_format_head_spaced']:
-                format_parameters['docx_default'].paragraphs[i].paragraph_format.space_after = Pt(1.1)
 
-        if i == 0:
-            format_parameters['texts'].font.size = Pt(format_parameters['font_size_company'])
-            format_parameters['docx_default'].paragraphs[i].paragraph_format.line_spacing = Pt(
-                format_parameters['font_leading_company'])
+    @staticmethod
+    def format_document_size(format_parameters: dict):
+        column = format_parameters['column']
+        format_parameters['docx_default'].sections[0].page_width = Cm(column)
+        format_parameters['docx_default'].sections[0].page_height = Cm(format_parameters['height'])
 
-        if i == 2 and format_parameters['name_section'] in fstring.newspapers['special_format_head_spaced']:
-            format_parameters['docx_default'].paragraphs[i].paragraph_format.line_spacing = Pt(13)
-            format_parameters['texts'].font.size = Pt(12)
+    @staticmethod
+    def format_margins(format_parameters: dict):
+        document_margins = [0, 0, 0, 0]
+        if format_parameters['name_section'] in fstring.newspapers['special_format_a4'] and \
+                format_parameters['number_column'] == 1:
+            document_margins[2] = 13
+        elif format_parameters['name_section'] in fstring.newspapers['special_format_a4'] \
+                and format_parameters['number_column'] == 2:
+            document_margins[2] = 4
+        format_parameters['docx_default'].sections[0].top_margin = Cm(document_margins[0])
+        format_parameters['docx_default'].sections[0].left_margin = Cm(document_margins[1])
+        format_parameters['docx_default'].sections[0].right_margin = Cm(document_margins[2])
+        format_parameters['docx_default'].sections[0].bottom_margin = Cm(document_margins[3])
 
-        if i == 1:
-            format_parameters['texts'].bold = False
+    @staticmethod
+    def format_page(format_parameters: dict):
+        for i in range(len(format_parameters['docx_default'].paragraphs)):
+            format_parameters['docx_default'].paragraphs[i].paragraph_format.space_after = Pt(0)
+            format_parameters['docx_default'].paragraphs[i].paragraph_format.space_before = Pt(0)
+            format_parameters['docx_default'].paragraphs[i].alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
 
-    elif format_parameters['format_allowed'] == "1" and i < 1:
-        format_parameters['docx_default'].paragraphs[i].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-        format_parameters['texts'].bold = format_parameters['bold']
+            add_edge(format_parameters, i)
 
-
-def format_document_size(format_parameters):
-    column = format_parameters['column']
-    format_parameters['docx_default'].sections[0].page_width = Cm(column)
-    format_parameters['docx_default'].sections[0].page_height = Cm(format_parameters['height'])
-
-
-def format_margins(format_parameters):
-    document_margins = [0, 0, 0, 0]
-    if format_parameters['name_section'] in fstring.newspapers['special_format_a4'] and\
-            format_parameters['number_column'] == 1:
-        document_margins[2] = 13
-    elif format_parameters['name_section'] in fstring.newspapers['special_format_a4']\
-            and format_parameters['number_column'] == 2:
-        document_margins[2] = 4
-    format_parameters['docx_default'].sections[0].top_margin = Cm(document_margins[0])
-    format_parameters['docx_default'].sections[0].left_margin = Cm(document_margins[1])
-    format_parameters['docx_default'].sections[0].right_margin = Cm(document_margins[2])
-    format_parameters['docx_default'].sections[0].bottom_margin = Cm(document_margins[3])
+            for format_parameters['texts'] in format_parameters['docx_default'].paragraphs[i].runs:
+                format_parameters['texts'].font.name = format_parameters['font_name']
+                format_parameters['texts'].font.size = Pt(format_parameters['font_size'])
+                format_parameters['docx_default'].paragraphs[i].paragraph_format.line_spacing = Pt(
+                    format_parameters['font_leading'])
+                Format.format_text_head(i, format_parameters)
 
 
-def format_page(format_parameters):
-    for i in range(len(format_parameters['docx_default'].paragraphs)):
-        format_parameters['docx_default'].paragraphs[i].paragraph_format.space_after = Pt(0)
-        format_parameters['docx_default'].paragraphs[i].paragraph_format.space_before = Pt(0)
-        format_parameters['docx_default'].paragraphs[i].alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-
-        add_edge(format_parameters, i)
-
-        for format_parameters['texts'] in format_parameters['docx_default'].paragraphs[i].runs:
-            format_parameters['texts'].font.name = format_parameters['font_name']
-            format_parameters['texts'].font.size = Pt(format_parameters['font_size'])
-            format_parameters['docx_default'].paragraphs[i].paragraph_format.line_spacing = Pt(
-                format_parameters['font_leading'])
-            format_text_head(i, format_parameters)
-
-
-def add_edge(format_parameters, i):
+def add_edge(format_parameters: dict, i):
     if format_parameters['edge'] is True:
         border_size: int = 4
         border_space: int = 1
@@ -242,7 +246,7 @@ def add_edge(format_parameters, i):
         format_parameters['docx_default'].paragraphs[i].paragraph_format.border_right(border_size, border_space)
 
 
-def special_adjust(format_parameters):
+def special_adjust(format_parameters: dict):
     if format_parameters['name_section'] in fstring.newspapers['special_format_a4']:
         docx_default = format_parameters['docx_default']
         column: int = 21
@@ -255,7 +259,7 @@ def special_adjust(format_parameters):
         docx_default.sections[0].right_margin = Cm(document_right_margin)
 
 
-def save_document(format_parameters):
+def save_document(format_parameters: dict):
     format_parameters['docx_default'].save(format_parameters['document_name'] + '.docx')
     chars_count: int = 0
     for p in format_parameters['docx_default'].paragraphs:
@@ -263,18 +267,18 @@ def save_document(format_parameters):
     logging.info(fstring.message["info"]['docx_success'])
 
 
-def standardizer_docx(format_parameters):
+def standardizer_docx(format_parameters: dict):
     logging.info(fstring.message["info"]['standard_start'])
     format_parameters['document'] = Document(format_parameters['document_name'] + '.docx')
     format_parameters['docx_default'] = Document(fstring.paths['model'])
 
-    format_document_size(format_parameters)
-    format_margins(format_parameters)
+    Format.format_document_size(format_parameters)
+    Format.format_margins(format_parameters)
     read_text(format_parameters)
     extract_text(format_parameters)
     find_replace(format_parameters)
     insert_date(format_parameters)
-    format_page(format_parameters)
+    Format.format_page(format_parameters)
     special_adjust(format_parameters)
     save_document(format_parameters)
 

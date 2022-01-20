@@ -4,10 +4,10 @@ from json import loads
 from re import sub
 
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed
-from django.utils.datastructures import MultiValueDictKeyError
 
 
 class require:
+
     def __init__(self, *params):
         self.params = params
 
@@ -16,7 +16,6 @@ class require:
         def wrapper(request):
             if request.method != 'POST':
                 return HttpResponseNotAllowed(permitted_methods=('post',))
-
 
             data = loads(request.POST.get('data'))
             newspaper = data['newspaper'][0]['fields']
@@ -48,8 +47,9 @@ class require:
         return wrapper
 
 
-def formatting_file_path(
-        client, date_file, days, extension_in, newspaper_name, number_column, publication_type, pv_os,
-        pvos_number, title
-):
-    return f"{client}/{date_file.year}/{pv_os}-{pvos_number}/{date_file.month}-{date_file.day}/{pv_os}-{pvos_number}_{newspaper_name[1].rstrip()}-{newspaper_name[2]}_{title.upper()}_{publication_type['format_type']}_{days}_{number_column}xheight{extension_in}"
+class Formatting:
+    def formatting_file_path(
+            client, date_file, days, extension_in, newspaper_name, number_column, publication_type, pv_os,
+            pvos_number, title
+    ):
+        return f"{client}/{date_file.year}/{pv_os}-{pvos_number}/{date_file.month}-{date_file.day}/{pv_os}-{pvos_number}_{newspaper_name[1].rstrip()}-{newspaper_name[2]}_{title.upper()}_{publication_type['format_type']}_{days}_{number_column}xheight{extension_in}"

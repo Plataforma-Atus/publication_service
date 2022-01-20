@@ -260,12 +260,12 @@ def test_o_estado_ms(o_estado_ms):
 
 
 def test_o_dia_sp(o_dia_sp):
-    url = 'http://localhost:8003/create_publication'
+    url: str = 'http://localhost:8003/create_publication'
 
     file = 'tests/PV-7543.docx'
 
     files = {'file': open(file, 'rb')}
-    response = requests.post(url, data=o_dia_sp, files=files)
+    response: Response = requests.post(url, data=o_dia_sp, files=files)
     expected_payload = {'file': 'documents/Atus-Teste/2022/PV-2/1-19/PV-2_ODia-SP_TEST_Edital_1_2x100mm',
                         'width': '9.60', 'height': '10.00', 'price': '3000.00', 'price_by_cm': '31.25',
                         'newspaper': 'Noticiário - O Dia - SP', 'chars_count': 4836, 'format_out': '.pdf'}

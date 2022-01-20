@@ -8,7 +8,7 @@ from django.http import Http404, HttpResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
 from publisher.commute.driver import Checking, InputData
 from publisher.commute import driver, fstring
-from publisher.domain import formatting_file_path, require
+from publisher.domain import require, Formatting
 
 
 @csrf_exempt
@@ -22,7 +22,7 @@ def create_publication(
 ):
     date_file: date = date.today()
 
-    full_name = formatting_file_path(
+    full_name = Formatting.formatting_file_path(
         client, date_file, days, extension_in, newspaper_name, number_column,
         publication_type, pv_os, pvos_number, title
     )
