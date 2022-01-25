@@ -3,11 +3,13 @@ import logging
 
 class Budget:
 
-    @staticmethod
-    def make_budget(result, format_parameters):
-        result['newspaper'] = format_parameters['name_section']
-        result['price_cm'] = float(format_parameters['price_cm'])
-        result['width'] = float(format_parameters['column'])
+    def __init__(self):
+        self.format_parameters = None
+
+    def make_budget(self, result, format_parameters):
+        result['newspaper'] = self.format_parameters['name_section']
+        result['price_cm'] = float(self.format_parameters['price_cm'])
+        result['width'] = float(self.format_parameters['column'])
         return result, format_parameters
 
     @staticmethod

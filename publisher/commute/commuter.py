@@ -9,14 +9,15 @@ logging.basicConfig(level=logging.INFO)
 class ConvertingFile:
 
     @staticmethod
-    def path_finder():
-        path_driver: str = getcwd()
-        return path_driver + "//"
+    def __path_finder():
+        return f"{getcwd()}//"
 
     @staticmethod
     def commuter(document, extension_in, extension_out):
         try:
-            system(f'unoconv -f "{extension_out[1:]}" "{ConvertingFile.path_finder()}{document + extension_in}"')
+            system(
+                f'unoconv -f "{extension_out[1:]}" "{ConvertingFile.__path_finder()}{document + extension_in}"'
+            )
             logging.info(f"Converted \"{extension_in}\" to \"{extension_out}\".")
 
         except FileNotFoundError:

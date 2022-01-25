@@ -178,7 +178,7 @@ class TextReading:
         elif format_parameters['format_allowed'] == "1":
             format_parameters['text_index'] = 1
             for idx, format_parameters['initial_paragraph'] in enumerate(format_parameters['document'].paragraphs):
-                if format_parameters['text_index'] > 0:
+                if format_parameters['text_index']:
                     format_parameters['initial_paragraph'].text = sub('  +', ' ',
                                                                       format_parameters['initial_paragraph'].text)
                     if format_parameters['initial_paragraph'].text != '' and format_parameters[
@@ -193,7 +193,7 @@ class TextReading:
 class Format:
 
     @staticmethod
-    def format_text_head(i, format_parameters):
+    def format_text_head(i, format_parameters: dict):
         if format_parameters['format_allowed'] == "0":
 
             if i < 3:
