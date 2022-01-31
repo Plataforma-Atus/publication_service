@@ -11,6 +11,9 @@ from publisher.commute import driver, fstring
 from publisher.domain import require, Formatting
 
 
+logging.basicConfig(format='%(process)d-%(levelname)s-%(message)s')
+
+
 @csrf_exempt
 @require(
     'data', 'newspaper', 'newspaper_name', 'publication_type', 'column', 'number_column', 'pv_os', 'pvos_number',
@@ -43,11 +46,11 @@ def create_publication(
     result['format_out'] = newspaper['format_out']
 
     try:
-        logging.info(fstring.message["info"]['process_success'])
+        print(fstring.message["info"]['process_success'])
 
         return HttpResponse(dumps(result), content_type=fstring.formats['http']['json'])
     except result[None]:
         raise Http404(fstring.message['http']['404'])
     except Exception as http_error:
-        logging.info(result)
-        logging.info(f"Description: {http_error}")
+        print(result)
+        logging.error(f"Description: {http_error}", exc_info=True)

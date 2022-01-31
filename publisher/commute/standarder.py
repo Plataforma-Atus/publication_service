@@ -8,7 +8,7 @@ from docx.shared import Cm, Pt, RGBColor
 
 from publisher.commute import fstring
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(format='%(process)d-%(levelname)s-%(message)s')
 
 
 def find_replace(format_parameter):
@@ -79,7 +79,7 @@ class Insert:
         if format_parameters['name_section'] in fstring.newspapers['insert_date']:
             date_today: date = date.today()
             docx_default.paragraphs[-1].add_run('\t')
-            logging.info(format_parameters['days'])
+            print(format_parameters['days'])
 
             if days == "1":
                 docx_default.paragraphs[-1].add_run(
@@ -272,14 +272,14 @@ def save_document(format_parameters: dict, chars_count=0):
     format_parameters['docx_default'].save(format_parameters['document_name'] + '.docx')
     for p in format_parameters['docx_default'].paragraphs:
         format_parameters['chars_count'] = chars_count + len(p.text)
-    logging.info(fstring.message["info"]['docx_success'])
+    print(fstring.message["info"]['docx_success'])
 
 
 class Standardizer:
 
     @staticmethod
     def docx(format_parameters: dict):
-        logging.info(fstring.message["info"]['standard_start'])
+        print(fstring.message["info"]['standard_start'])
         format_parameters['document'] = Document(format_parameters['document_name'] + '.docx')
         format_parameters['docx_default'] = Document(fstring.paths['model'])
 

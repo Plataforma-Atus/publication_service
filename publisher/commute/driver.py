@@ -10,7 +10,7 @@ from publisher.commute.commuter import ConvertingFile
 
 from publisher.commute.budgeter import Budget
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(format='%(process)d-%(levelname)s-%(message)s')
 
 
 class Rename:
@@ -40,7 +40,7 @@ class Rename:
             rename(f"{result['file'].replace('_crp', '')}{format_parameters['extension_in']}",
                    f"{document_name_with_height}{format_parameters['extension_in']}")
         result['file'] = document_name_with_height.replace('_crp', '')
-        logging.info(document_name_with_height)
+        print(document_name_with_height)
         format_parameters['document_name_with_height'] = document_name_with_height
         DocumentAdjustments.convert_pdf_to_greyscale(format_parameters)
         return result
@@ -99,7 +99,7 @@ class Manipulation:
             return Calculate.budget(result, format_parameters)
 
         else:
-            logging.info(fstring.message["exception"]['format'])
+            logging.error(fstring.message["exception"]['format'], exc_info=True)
 
     @staticmethod
     def docx(format_parameters: dict):
@@ -108,8 +108,8 @@ class Manipulation:
             return Manipulation.pdf(format_parameters)
 
         except Exception as unknown_error:
-            logging.info(format_parameters['document_name'])
-            logging.info(f"Description: {unknown_error}", "- driver.to_default")
+            print(format_parameters['document_name'])
+            logging.error(f"Description: {unknown_error}", "- driver.to_default", exc_info=True)
             return
 
 
@@ -120,7 +120,7 @@ class Checking:
         extension_in = format_parameters['extension_in'].replace(" ", "")
 
         if extension_in == fstring.formats["commute"][1]:
-            logging.info(fstring.message["info"]['conversion_not'])
+            print(fstring.message["info"]['conversion_not'])
             result = Manipulation.docx(format_parameters)
 
         elif any(map(lambda x: format_parameters['extension_in'] == x,
@@ -140,9 +140,9 @@ class Checking:
                 )
 
         else:
-            logging.info(fstring.message["exception"]['format_allowed'], "- driver.driver")
+            logging.error(fstring.message["exception"]['format_allowed'], "- driver.driver", exc_info=True)
 
-        logging.info(result, " - result for driver")
+        print(result, " - result for driver")
 
         return result
 
