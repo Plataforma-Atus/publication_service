@@ -6,10 +6,12 @@ from os import path
 from django.core.files.storage import default_storage as storage
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
-from publisher.commute.driver import Checking, InputData
 from publisher.commute import driver, fstring
 from publisher.domain import require, Formatting
 
+from publisher.repository.input import InputData
+
+from publisher.repository.checking_input import Checking
 
 logging.basicConfig(format='%(process)d-%(levelname)s-%(message)s')
 
