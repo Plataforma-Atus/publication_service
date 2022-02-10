@@ -5,7 +5,7 @@ from publisher.commute.commuter import ConvertingFile
 from publisher.repository.extension_file_manipulation import Manipulation
 
 
-class Checking:
+class ValidatorExtension:
 
     @staticmethod
     def input_extension(format_parameters: dict):

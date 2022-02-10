@@ -11,7 +11,7 @@ from publisher.domain import require, Formatting
 
 from publisher.repository.input import InputData
 
-from publisher.repository.checking_input import Checking
+from publisher.validator.validator_extesion import ValidatorExtension
 
 logging.basicConfig(format='%(process)d-%(levelname)s-%(message)s')
 
@@ -44,7 +44,7 @@ def create_publication(
         days, user_condensation, just_name
     )
 
-    result = Checking.input_extension(format_parameters)
+    result = ValidatorExtension.input_extension(format_parameters)
     result['format_out'] = newspaper['format_out']
 
     try:
