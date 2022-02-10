@@ -3,6 +3,7 @@ import logging
 from publisher.commute import fstring
 from publisher.commute.commuter import ConvertingFile
 from publisher.repository.extension_file_manipulation import Manipulation
+from django.core.files.storage import default_storage as storage
 
 
 class ValidatorExtension:
@@ -37,3 +38,11 @@ class ValidatorExtension:
         print(result, " - result for driver")
 
         return result
+
+
+class ValidatorStorage:
+
+    @staticmethod
+    def storage_exists(full_name: str):
+        if storage.exists(full_name):
+            storage.delete(full_name)

@@ -13,6 +13,8 @@ from publisher.repository.input import InputData
 
 from publisher.validator.validator_extesion import ValidatorExtension
 
+from publisher.validator.validator_extesion import ValidatorStorage
+
 logging.basicConfig(format='%(process)d-%(levelname)s-%(message)s')
 
 
@@ -32,16 +34,21 @@ def create_publication(
         publication_type, pv_os, pvos_number, title
     )
 
-    if storage.exists(full_name):
-        storage.delete(full_name)
+    ValidatorStorage.storage_exists(full_name)
 
     just_name, extension_in = path.splitext(storage.save(full_name, file))
     document_name = fstring.paths['documents'] + just_name
 
     format_parameters = InputData.format_parameter(
-        document_name, extension_in, newspaper,
-        publication_type, column, number_column,
-        days, user_condensation, just_name
+        document_name,
+        extension_in,
+        newspaper,
+        publication_type,
+        column,
+        number_column,
+        days,
+        user_condensation,
+        just_name
     )
 
     result = ValidatorExtension.input_extension(format_parameters)

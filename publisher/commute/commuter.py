@@ -15,9 +15,7 @@ class ConvertingFile:
     @staticmethod
     def commuter(document, extension_in, extension_out):
         try:
-            system(
-                f'unoconv -f "{extension_out[1:]}" "{ConvertingFile.__path_finder()}{document + extension_in}"'
-            )
+            system(f'unoconv -f "{extension_out[1:]}" "{ConvertingFile.__path_finder()}{document + extension_in}"')
             logging.info(f"Converted \"{extension_in}\" to \"{extension_out}\".")
 
         except FileNotFoundError:
